@@ -1,0 +1,148 @@
+:root {
+    --bg-primary: #0f172a;
+    --bg-surface: #1e293b;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border: #334155;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-main);
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 600px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+header h1 {
+    font-size: 2.2rem;
+    color: var(--accent);
+}
+
+.subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.search-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    margin-bottom: 24px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.button-group {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 8px;
+}
+
+.button-group .btn-info {
+    grid-column: span 2;
+}
+
+.btn {
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn-primary { background-color: var(--accent); color: white; }
+.btn-primary:hover { background-color: var(--accent-hover); }
+.btn-secondary { background-color: #475569; color: white; }
+.btn-info { background-color: #0ea5e9; color: white; }
+
+.flash {
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+.flash.error { background-color: #ef4444; color: white; }
+.flash.info { background-color: #f59e0b; color: white; }
+
+.table-wrapper {
+    overflow-x: auto;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.data-table th, .data-table td {
+    padding: 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+.data-table th {
+    background-color: #111827;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+.track-title {
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.btn-play, .btn-sm {
+    display: inline-block;
+    padding: 6px 12px;
+    background-color: #10b981;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+.btn-sm { background-color: var(--accent); }
+.timestamp { color: var(--text-muted); font-size: 0.85rem; }
+
