@@ -7,24 +7,28 @@ from supabase import create_client
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-# 1. Force Python to find your actual project directory
+# 1. Look for a local .env file path
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 ENV_FILE_PATH = os.path.join(PROJECT_DIR, '.env')
 
-# 2. Explicitly load the .env file
-load_dotenv(ENV_FILE_PATH)
+# 2. ONLY attempt to load it if the file actually exists (Local Phone Mode)
+if os.path.exists(ENV_FILE_PATH):
+    load_dotenv(ENV_FILE_PATH)
+    print("🏠 Running locally: Loaded configuration from .env file.")
+else:
+    # If it doesn't exist, Python will seamlessly read from Render's Environment tab automatically
+    print("☁️ Running in Cloud: Reading directly from Render Environment Variables.")
 
-# 3. Fetch the config variables
+# 3. Fetch the config variables (works flawlessly for both environments now)
 supabase_url = os.environ.get("SUPABASE_URL")
 supabase_key = os.environ.get("SUPABASE_KEY")
-flask_secret = os.environ.get("FLASK_SECRET_KEY")
+flask_secret = os.environ.get("FLASK_SECRET_KEY", "fallback-secret-key-for-dev")
 youtube_api_key = os.environ.get("YOUTUBE_API_KEY")
 
-# 4. Diagnostic check to print the exact issue before crashing
+# 4. Diagnostic check modified for cloud environments
 if not supabase_url or not supabase_key:
-    print("\nENV ERROR DETECTED")
-    print(f"Looking for .env at: {ENV_FILE_PATH}")
-    print(f"File exists? {os.path.exists(ENV_FILE_PATH)}")
+    print("\n❌ CONFIGURATION ERROR DETECTED")
+    print("Could not find SUPABASE_URL or SUPABASE_KEY in the system environment.")
     raise ValueError("Stopping: SUPABASE_URL or SUPABASE_KEY is missing.")
 
 # 5. Initialize Flask
@@ -36,7 +40,7 @@ supabase = create_client(supabase_url, supabase_key)
 
 # 7. Initialize YouTube Client
 if not youtube_api_key:
-    raise ValueError("YOUTUBE_API_KEY is missing from your .env file.")
+    raise ValueError("YOUTUBE_API_KEY is missing from the environment configuration.")
 youtube = build("youtube", "v3", developerKey=youtube_api_key)
 
 print("✅ Success! Flask, Supabase, and YouTube initialized perfectly.")
@@ -203,4 +207,6 @@ def view_history_results(search_id):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    # Dynamically read the assignment port given by Render's environment, fallback to 5000 locally
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
