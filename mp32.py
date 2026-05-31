@@ -18,7 +18,9 @@ else:
     print("☁️ Running in Cloud: Reading directly from Render Environment Variables.")
 
 supabase_url = os.environ.get("SUPABASE_URL")
-supabase_key = os.environ.get("SUPABASE_KEY")
+# Look for the master admin key instead of the public one
+supabase_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") 
+
 flask_secret = os.environ.get("FLASK_SECRET_KEY", "fallback-secret-key-for-dev")
 youtube_api_key = os.environ.get("YOUTUBE_API_KEY")
 
