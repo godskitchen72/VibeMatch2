@@ -3,92 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VibeMatch Music Discovery</title>
+    <title>VibeMatch</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="app-container">
-        <header>
-            <h1>🎵 VibeMatch</h1>
-            <p class="subtitle">AI-Driven Semantic Discovery</p>
-        </header>
+    <div class="container">
+        <form method="POST" action="/">
+            <input type="text" name="query" placeholder="Search song or vibe / Искать..." value="{{ query }}" required autocomplete="off">
+            
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="filter_type" value="tracks" {% if filter_type != 'sets' %}checked{% endif %}>
+                    <span>Tracks (≤10m)</span>
+                </label>
+                <label>
+                    <input type="radio" name="filter_type" value="sets" {% if filter_type == 'sets' %}checked{% endif %}>
+                    <span>Sets (>10m)</span>
+                </label>
+            </div>
+
+            <div class="button-row">
+                <button type="submit" class="btn btn-go">GO</button>
+                <button type="button" class="btn btn-clr" onclick="window.location.href='/'">CLR</button>
+                <button type="button" class="btn btn-prev" onclick="window.location.href='/history'">PREV</button>
+            </div>
+        </form>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flash {{ category }}">{{ message }}</div>
+                {% for category, msg in messages %}
+                    <div class="flash {{ category }}">{{ msg }}</div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
 
-        <section class="search-card">
-            <form method="POST" action="{{ url_for('index') }}" id="searchForm">
-                <input 
-                    type="text" 
-                    name="query" 
-                    placeholder="e.g., dark French disco with romantic rhythm..." 
-                    value="{{ query }}" 
-                    required
-                >
-                <div class="button-group">
-                    <button type="submit" class="btn btn-primary">Discover</button>
-                    <a href="{{ url_for('index') }}" class="btn btn-secondary">Clear</a>
-                    <a href="{{ url_for('history') }}" class="btn btn-info">Previous Searches</a>
-                </div>
-            </form>
-        </section>
+        {% if results %}
+            <div class="results-list">
+                <h3>Results</h3>
+                {% for track in results %}
+                    <div class="track-card">
+                        <a href="{{ track.video_url }}" target="_blank">{{ track.title }}</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
 
-        <main class="results-container">
-            {% if history %}
-                <h2>Recent Search Profiles</h2>
-                <div class="table-wrapper">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Search ID</th>
-                                <th>Search Description</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for item in history %}
-                            <tr>
-                                <td class="timestamp">#{{ item.id }}</td>
-                                
-                                <td><strong>{{ item.query_text }}</strong></td>
-                                
-                                <td><a href="{{ url_for('view_history_results', search_id=item.id) }}" class="btn-sm">Reload</a></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% elif results %}
-                <h2>Curated Track Targets ({{ results|length }})</h2>
-                <div class="table-wrapper">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Artist & Track Metadata</th>
-                                <th>Stream Link</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for track in results %}
-                            <tr>
-                                <td class="track-title">{{ track.title }}</td>
-                                <td>
-                                    <a href="{{ track.video_url }}" target="_blank" class="btn-play">▶ Open Track</a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% elif query %}
-                <p class="no-results">No pristine original audio configurations found for this request.</p>
-            {% endif %}
-        </main>
+        {% if history %}
+            <div class="history-list">
+                <h3>Recent Searches</h3>
+                {% for item in history %}
+                    <div class="history-item">
+                        <a href="/history/{{ item.id }}">{{ item.query_text }}</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
 </body>
 </html>

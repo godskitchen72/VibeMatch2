@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VibeMatch Music Discovery</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>🎵 VibeMatch</h1>
+            <p class="subtitle">AI-Driven Semantic Discovery</p>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <section class="search-card">
+            <form method="POST" action="{{ url_for('index') }}" id="searchForm">
+                <input 
+                    type="text" 
+                    name="query" 
+                    placeholder="e.g., dark French disco with romantic rhythm..." 
+                    value="{{ query }}" 
+                    required
+                >
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">Discover</button>
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">Clear</a>
+                    <a href="{{ url_for('history') }}" class="btn btn-info">Previous Searches</a>
+                </div>
+            </form>
+        </section>
+
+        <main class="results-container">
+            {% if history %}
+                <h2>Recent Search Profiles</h2>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Search ID</th>
+                                <th>Search Description</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in history %}
+                            <tr>
+                                <td class="timestamp">#{{ item.id }}</td>
+                                
+                                <td><strong>{{ item.query_text }}</strong></td>
+                                
+                                <td><a href="{{ url_for('view_history_results', search_id=item.id) }}" class="btn-sm">Reload</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% elif results %}
+                <h2>Curated Track Targets ({{ results|length }})</h2>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Artist & Track Metadata</th>
+                                <th>Stream Link</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for track in results %}
+                            <tr>
+                                <td class="track-title">{{ track.title }}</td>
+                                <td>
+                                    <a href="{{ track.video_url }}" target="_blank" class="btn-play">▶ Open Track</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% elif query %}
+                <p class="no-results">No pristine original audio configurations found for this request.</p>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>
